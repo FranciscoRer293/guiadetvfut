@@ -1,5 +1,6 @@
 import React from 'react';
 import { Match } from '../types';
+import { getTeamLogo } from '../services/teamLogos';
 
 interface MatchCardProps {
   match: Match;
@@ -40,7 +41,7 @@ const MatchCard: React.FC<MatchCardProps> = ({ match, isFavorite, onToggleFavori
   return (
     <div 
       tabIndex={0}
-      className="relative bg-gray-800 rounded-2xl shadow-lg overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-cyan-500/20 focus:outline-none focus:ring-4 focus:ring-cyan-500 focus:scale-105"
+      className="relative bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl shadow-lg overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-cyan-500/20 focus:outline-none focus:ring-4 focus:ring-cyan-500 focus:scale-105 border border-gray-700"
     >
         <button
             onClick={() => onToggleFavorite(match)}
@@ -60,13 +61,33 @@ const MatchCard: React.FC<MatchCardProps> = ({ match, isFavorite, onToggleFavori
         
         <div className="flex items-center justify-around text-white mb-8">
           <div className="flex flex-col items-center w-1/3 text-center">
-            <img src={team1.logoUrl} alt={team1.name} className="h-20 w-20 sm:h-24 sm:w-24 object-cover rounded-full bg-gray-700 mb-3" />
-            <span className="font-bold text-base sm:text-lg">{team1.name}</span>
+            <div className="relative">
+              <img 
+                src={getTeamLogo(team1.name)} 
+                alt={team1.name} 
+                className="h-20 w-20 sm:h-24 sm:w-24 object-contain rounded-full bg-white p-2 shadow-lg border-2 border-gray-600" 
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.src = 'https://via.placeholder.com/100x100/1f2937/ffffff?text=FC';
+                }}
+              />
+            </div>
+            <span className="font-bold text-base sm:text-lg mt-3">{team1.name}</span>
           </div>
-          <div className="text-4xl font-light text-gray-500">vs</div>
+          <div className="text-4xl font-light text-gray-500 mx-4">vs</div>
           <div className="flex flex-col items-center w-1/3 text-center">
-            <img src={team2.logoUrl} alt={team2.name} className="h-20 w-20 sm:h-24 sm:w-24 object-cover rounded-full bg-gray-700 mb-3" />
-            <span className="font-bold text-base sm:text-lg">{team2.name}</span>
+            <div className="relative">
+              <img 
+                src={getTeamLogo(team2.name)} 
+                alt={team2.name} 
+                className="h-20 w-20 sm:h-24 sm:w-24 object-contain rounded-full bg-white p-2 shadow-lg border-2 border-gray-600" 
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.src = 'https://via.placeholder.com/100x100/1f2937/ffffff?text=FC';
+                }}
+              />
+            </div>
+            <span className="font-bold text-base sm:text-lg mt-3">{team2.name}</span>
           </div>
         </div>
 

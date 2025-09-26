@@ -1,5 +1,6 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { Championship, Match } from '../types';
+import { getTeamLogo } from './teamLogos';
 
 if (!process.env.API_KEY) {
   throw new Error("API_KEY environment variable is not set.");
@@ -34,7 +35,7 @@ const matchSchema = {
         type: Type.OBJECT,
         properties: {
           name: { type: Type.STRING, description: "Nome do time." },
-          logoUrl: { type: Type.STRING, description: "URL para o escudo do time. Use 'https://picsum.photos/100' como placeholder." },
+          logoUrl: { type: Type.STRING, description: "URL para o escudo do time. Será substituído automaticamente pelo logo real." },
         },
         required: ["name", "logoUrl"],
       },
@@ -80,8 +81,17 @@ export const fetchMatches = async (championship: Championship): Promise<Match[]>
     const jsonText = response.text.trim();
     const matches = JSON.parse(jsonText) as Match[];
 
+    // Atualizar logos dos times com logos reais
+    const matchesWithRealLogos = matches.map(match => ({
+      ...match,
+      teams: match.teams.map(team => ({
+        ...team,
+        logoUrl: getTeamLogo(team.name)
+      }))
+    }));
+
     // Sort matches by date
-    return matches.sort((a, b) => new Date(a.dateTime).getTime() - new Date(b.dateTime).getTime());
+    return matchesWithRealLogos.sort((a, b) => new Date(a.dateTime).getTime() - new Date(b.dateTime).getTime());
   } catch (error) {
     console.error("Error fetching matches from Gemini API:", error);
     // In case of error, return some mock data to show the UI
